@@ -42,8 +42,15 @@ export async function activateSubscription(req, res) {
 
   try {
     const user = await User.findById(userId);
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.activeSubscription) {
+      return res
+        .status(400)
+        .json({ message: "User already has an active subscription" });
     }
 
     const plan = await SubscriptionPlan.findById(planId);
@@ -89,12 +96,10 @@ export async function activateSubscription(req, res) {
     user.activeSubscription = userSubscription._id;
     await user.save();
 
-    return res
-      .status(200)
-      .json({
-        message: "Subscription activated successfully",
-        userSubscription,
-      });
+    return res.status(200).json({
+      message: "Subscription activated successfully",
+      userSubscription,
+    });
   } catch (error) {
     console.error("Error activating subscription:", error);
     return res.status(500).json({ message: "Error activating subscription" });
