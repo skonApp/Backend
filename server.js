@@ -2,6 +2,8 @@ import express from "express";
 import mongoose from "mongoose";
 import morgan from "morgan";
 import cors from "cors";
+import dotenv from "dotenv";
+dotenv.config();
 
 // cron
 import { job } from "./jobs/cronJob.js";
@@ -18,14 +20,15 @@ import depositRoutes from "./routes/deposit.js";
 const app = express();
 const port = process.env.PORT;
 const databaseName = process.env.dbName;
+const dataBasePort = process.env.dataBasePort;
 
 mongoose.set("debug", true);
 mongoose.Promise = global.Promise;
 
 mongoose
-  .connect(`mongodb://127.0.0.1:27017/${databaseName}`)
+  .connect(`mongodb://127.0.0.1:${dataBasePort}/${databaseName}`)
   .then(() => {
-    console.log(`Connected to ${databaseName}`);
+    console.log(`Connected to Data base :${databaseName}`);
   })
   .catch((err) => {
     console.log(err);

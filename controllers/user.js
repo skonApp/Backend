@@ -20,11 +20,11 @@ export async function signin(req, res) {
     });
 
     if (!user) {
-      res.status(404).json({ message: "email or password invalid !" });
+      res.status(404).json({ message: "Email or password invalid !!" });
     } else {
       const validPass = bcrypt.compareSync(password, user.password);
       if (!validPass) {
-        res.status(401).json({ message: "email or password invalid !!" });
+        res.status(401).json({ message: "Email or password invalid !!" });
       } else {
         const payload = {
           _id: user._id,
