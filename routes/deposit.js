@@ -1,8 +1,8 @@
-import { createDepositAddress} from "../controllers/deposit.js";
 import express from "express";
+import { deposit } from "../controllers/deposit.js";
 
 const router = express.Router();
 
-router.post('/create-deposit-address', createDepositAddress);
+router.post("/generate-payment", deposit);
 
 export default router;
