@@ -42,10 +42,12 @@ const userSchema = new Schema(
         date: { type: Date, required: true, default: Date.now },
       },
     ],
-    activeSubscription: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "UserSubscription",
-    },
+    activeSubscriptions: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "UserSubscription",
+      },
+    ],
   },
   {
     timestamps: true,

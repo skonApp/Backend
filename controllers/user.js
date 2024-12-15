@@ -149,12 +149,13 @@ export async function getUser(req, res) {
   const { userId } = req.params;
   try {
     const user = await User.findById(userId).populate({
-      path: "activeSubscription",
+      path: "activeSubscriptions",
       populate: {
         path: "tier",
         model: "SubscriptionPlan",
       },
     });
+    console.log('user info :',user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }

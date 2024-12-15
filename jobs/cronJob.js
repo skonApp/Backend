@@ -37,7 +37,7 @@ export const checkExpiredSubscriptions = async () => {
 };
 
 // Cron job to check for expired subscriptions every minute
-export const job = new CronJob("0 * * * * *", async () => {
+export const job = new CronJob("1 * * * * *", async () => {
   console.log("Running job to check for expired subscriptions");
   await checkExpiredSubscriptions();
 });

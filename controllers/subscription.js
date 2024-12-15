@@ -47,12 +47,6 @@ export async function activateSubscription(req, res) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    if (user.activeSubscription) {
-      return res
-        .status(400)
-        .json({ message: "User already has an active subscription" });
-    }
-
     const plan = await SubscriptionPlan.findById(planId);
     if (!plan) {
       return res.status(404).json({ message: "Subscription plan not found" });
@@ -87,13 +81,19 @@ export async function activateSubscription(req, res) {
       startDate: startDate,
       endDate: endDate,
       payments: [payment],
+      active: true,
     });
 
     // Save user subscription
     await userSubscription.save();
 
-    // Update user's active subscription and save user data
-    user.activeSubscription = userSubscription._id;
+      // Push the new subscription to the user's activeSubscriptions array
+      await User.findByIdAndUpdate(
+        userId,
+        { $push: { activeSubscriptions: userSubscription._id } }, // Add to activeSubscriptions array
+        { new: true }
+      );
+      
     await user.save();
 
     return res.status(200).json({
