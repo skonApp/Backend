@@ -9,10 +9,10 @@ const secretKey = process.env.JWT_SECRET;
 
 //login
 export async function signin(req, res) {
-  const { email, password } = req.body;
+  const { phoneNumber, password } = req.body;
   try {
-    const user = await User.findOne({ email: email }).populate({
-      path: "activeSubscription",
+    const user = await User.findOne({ phoneNumber: phoneNumber }).populate({
+      path: "activeSubscriptions",
       populate: {
         path: "tier",
         model: "SubscriptionPlan",
@@ -20,21 +20,21 @@ export async function signin(req, res) {
     });
 
     if (!user) {
-      res.status(404).json({ message: "Email or password invalid !!" });
+      res.status(404).json({ message: "number or password invalid !!" });
     } else {
       const validPass = bcrypt.compareSync(password, user.password);
       if (!validPass) {
-        res.status(401).json({ message: "Email or password invalid !!" });
+        res.status(401).json({ message: "number or password invalid !!" });
       } else {
         const payload = {
           _id: user._id,
           name: user.name,
           lastname: user.lastname,
-          email: user.email,
+          phoneNumber: user.phoneNumber,
           avatar: user.avatar,
           wallet: user.wallet,
           frozenWallet: user.frozenWallet,
-          invitationCode: user.invitationCode,
+          invitationCode: user.phoneNumber,
           activeSubscription: user.activeSubscription,
           planName: user.activeSubscription
             ? user.activeSubscription.tier.planName
@@ -51,10 +51,16 @@ export async function signin(req, res) {
 // Registre user
 export async function signup(req, res) {
   try {
-    const { name, lastname, password, email, invitationCode } = req.body;
+    const { name, lastname, password, phoneNumber, invitationCode } = req.body;
 
-    const exist = await User.findOne({ email });
-    if (exist) return res.status(409).json("Account already exists!");
+    const exist = await User.findOne({ phoneNumber });
+    if (exist) {
+      return res.status(409).json({
+        status: 409,
+        message: "Account already exists!",
+      });
+    }
+    
 
     let avatar = null;
     if (req.file) {
@@ -66,7 +72,7 @@ export async function signup(req, res) {
     const cryptedPass = bcrypt.hashSync(password, salt);
 
     // Create unique invitation code
-    const uniqueInvitationCode = uuidv4();
+    // const uniqueInvitationCode = uuidv4();
 
     // Create new user object
     const user = new User({
@@ -74,8 +80,8 @@ export async function signup(req, res) {
       lastname,
       password: cryptedPass,
       avatar,
-      email,
-      invitationCode: uniqueInvitationCode,
+      phoneNumber,
+      invitationCode: phoneNumber,
     });
 
     // Check if invitation code is provided and assign referUser
