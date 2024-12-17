@@ -12,7 +12,7 @@ export async function signin(req, res) {
   const { phoneNumber, password } = req.body;
   try {
     const user = await User.findOne({ phoneNumber: phoneNumber }).populate({
-      path: "activeSubscriptions",
+      path: "subscriptions",
       populate: {
         path: "tier",
         model: "SubscriptionPlan",
@@ -155,7 +155,7 @@ export async function getUser(req, res) {
   const { userId } = req.params;
   try {
     const user = await User.findById(userId).populate({
-      path: "activeSubscriptions",
+      path: "subscriptions",
       populate: {
         path: "tier",
         model: "SubscriptionPlan",

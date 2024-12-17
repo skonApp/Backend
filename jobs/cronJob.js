@@ -19,11 +19,11 @@ export const checkExpiredSubscriptions = async () => {
 
       if (
         user &&
-        user.activeSubscription &&
-        user.activeSubscription.equals(subscription._id)
+        user.subscription &&
+        user.subscription.equals(subscription._id)
       ) {
         // Remove the active subscription reference from the user
-        user.activeSubscription = null;
+        user.subscription = null;
         await user.save();
         console.log(`Removed expired subscription for user: ${user._id}`);
       }
@@ -37,7 +37,7 @@ export const checkExpiredSubscriptions = async () => {
 };
 
 // Cron job to check for expired subscriptions every minute
-export const job = new CronJob("1 * * * * *", async () => {
+export const job = new CronJob("*/10 * * * * *", async () => {
   console.log("Running job to check for expired subscriptions");
   await checkExpiredSubscriptions();
 });

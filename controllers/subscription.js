@@ -87,13 +87,25 @@ export async function activateSubscription(req, res) {
     // Save user subscription
     await userSubscription.save();
 
-      // Push the new subscription to the user's activeSubscriptions array
-      await User.findByIdAndUpdate(
-        userId,
-        { $push: { activeSubscriptions: userSubscription._id } }, // Add to activeSubscriptions array
-        { new: true }
-      );
-      
+    // Push the new subscription to the user's activeSubscriptions array
+    await User.findByIdAndUpdate(
+      userId,
+      { $push: { subscriptions: userSubscription._id } }, // Add to activeSubscriptions array
+      { new: true }
+    );
+
+    // Check if it's the user's first subscription
+    const isFirstSubscription = user.subscriptions.length === 0;
+
+    // Add 5$ to the inviter if there is one and it's the first subscription
+    if (isFirstSubscription && user.referUser) {
+      const inviter = await User.findById(user.referUser);
+      if (inviter) {
+        inviter.wallet += 5; // Add 5$ to the inviter's wallet
+        await inviter.save(); // Save the inviter's updated wallet balance
+      }
+    }
+
     await user.save();
 
     return res.status(200).json({

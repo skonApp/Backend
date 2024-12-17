@@ -42,7 +42,7 @@ const userSchema = new Schema(
         date: { type: Date, required: true, default: Date.now },
       },
     ],
-    activeSubscriptions: [
+    subscriptions: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "UserSubscription",
