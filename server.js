@@ -16,6 +16,7 @@ import { notFoundError, errorHandler } from "./middlewares/error-handler.js";
 import userRoutes from "./routes/user.js";
 import subscriptionRoutes from "./routes/subscription.js";
 import depositRoutes from "./routes/deposit.js";
+import wheelRoutes from "./routes/wheel.js"
 
 const app = express();
 const port = process.env.PORT;
@@ -43,6 +44,8 @@ app.use("/img", express.static("public/images"));
 app.use("/user", userRoutes);
 app.use("/sub", subscriptionRoutes);
 app.use('/deposit', depositRoutes);
+
+app.use("/wheel",wheelRoutes)
 
 app.use(notFoundError);
 app.use(errorHandler);
