@@ -39,7 +39,6 @@ export async function getSub(req, res) {
 
 export async function activateSubscription(req, res) {
   const { userId, planId } = req.body;
-
   try {
     const user = await User.findById(userId);
 
@@ -102,8 +101,11 @@ export async function activateSubscription(req, res) {
       const inviter = await User.findById(user.referUser);
       if (inviter) {
         inviter.wallet += 5; // Add 5$ to the inviter's wallet
+        inviter.confirmInvitedUser +=1;
+        inviter.monthlyConfirmInvites+=1;
         await inviter.save(); // Save the inviter's updated wallet balance
-      }
+      } 
+
     }
 
     await user.save();

@@ -6,6 +6,7 @@ import {
   signin,
   signup,
   updatePassword,
+  createWithdrawRequest,
 } from "../controllers/user.js";
 import multer from "../middlewares/multer-config.js";
 import authenticateToken from "../middlewares/authenticateToken.js";
@@ -22,5 +23,7 @@ router.get("/:userId", getUser);
 router.put("/updatePassword/:userId", updatePassword);
 router.get("/referred-users/:userId", getReferredUsers);
 router.get("/inviting-user/:userId", getInvitingUser);
+//Withdraw
+router.post("/cwr/:userId",createWithdrawRequest)
 
 export default router;

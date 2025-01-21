@@ -17,7 +17,7 @@ import userRoutes from "./routes/user.js";
 import subscriptionRoutes from "./routes/subscription.js";
 import depositRoutes from "./routes/deposit.js";
 import wheelRoutes from "./routes/wheel.js"
-
+import achievementRoutes from "./routes/achievement.js"
 const app = express();
 const port = process.env.PORT;
 const databaseName = process.env.dbName;
@@ -47,6 +47,7 @@ app.use('/deposit', depositRoutes);
 
 app.use("/wheel",wheelRoutes)
 
+app.use("/achievement",achievementRoutes)
 app.use(notFoundError);
 app.use(errorHandler);
 

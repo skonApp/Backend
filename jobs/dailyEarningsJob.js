@@ -3,7 +3,7 @@ const CronJob = Cron.CronJob;
 import User from "../models/user.js";
 import UserSubscription from "../models/userSubscription.js";
 
-export const dailyEarningsJob = new CronJob("*/10 * * * * *", async () => {
+export const dailyEarningsJob = new CronJob("*/30 * * * * *", async () => {
   console.log("Running daily job to update frozen balances");
 
   await updateFrozenBalances();

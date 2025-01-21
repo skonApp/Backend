@@ -18,6 +18,14 @@ export const spinWheel = async (req, res) => {
         .json({ message: `User with ID: ${userId} not found` });
     }
 
+        // Check if the user has available spins
+        if (user.spin <= 0) {
+          return res.status(400).json({ message: "No spins available" });
+        }
+    
+        // Decrement the spin count
+        user.spin -= 1;
+
     // Calculate the weighted random selection
     const totalPercentage = wheelItems.reduce((sum, item) => sum + item.percentage, 0);
     const randomNumber = Math.random() * totalPercentage;
@@ -75,6 +83,7 @@ export const spinWheel = async (req, res) => {
           .status(400)
           .json({ message: `Invalid wheel item type: ${selectedItem.type}` });
     }
+
 
     // Save the spin history
     const spinHistory = new SpinHistory({

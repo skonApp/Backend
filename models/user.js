@@ -42,12 +42,37 @@ const userSchema = new Schema(
         date: { type: Date, required: true, default: Date.now },
       },
     ],
+    withdraws: [
+      {
+        method: { type: String, required: true },
+        amount: { type: Number, required: true },
+        note: { type: String },
+        date: { type: Date, required: true, default: Date.now },
+        approved: { type: Boolean, require: true ,default : false},
+      },
+    ],
     subscriptions: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "UserSubscription",
       },
     ],
+    spin: {
+      type: Number,
+      default: 0,
+    },
+    confirmInvitedUser: {
+      type: Number,
+      default: 0,
+    },
+    monthlyConfirmInvites: {
+      type: Number,
+      default: 0, 
+    },
+    monthlyDeposit :{
+      type: Number,
+      default: 0, 
+    },
   },
   {
     timestamps: true,

@@ -4,6 +4,8 @@ import jwt from "jsonwebtoken";
 import "dotenv/config";
 // unique id :
 import { v4 as uuidv4 } from "uuid";
+import UserAchievement from "../models/userAchievement.js";
+import AchievementItem from "../models/achievementItem.js";
 
 const secretKey = process.env.JWT_SECRET;
 
@@ -60,7 +62,6 @@ export async function signup(req, res) {
         message: "Account already exists!",
       });
     }
-    
 
     let avatar = null;
     if (req.file) {
@@ -91,9 +92,21 @@ export async function signup(req, res) {
         user.referUser = invitingUser._id;
       }
     }
-
+  
     // Save new user
     await user.save();
+
+    const achievementItems = await AchievementItem.find();
+
+    // Initialize achievements for the new user
+    for (let achievement of achievementItems) {
+      const userAchievement = new UserAchievement({
+        user: user._id,
+        achievement: achievement._id,
+      });
+      await userAchievement.save();
+    }
+
     res.status(201).json({ message: "User created successfully", user });
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -161,7 +174,7 @@ export async function getUser(req, res) {
         model: "SubscriptionPlan",
       },
     });
-    console.log('user info :',user);
+    console.log("user info :", user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -169,4 +182,43 @@ export async function getUser(req, res) {
   } catch (error) {
     res.status(400).json({ message: "Failed to get user", error });
   }
+}
+
+// Withdraw :
+export async function createWithdrawRequest(req, res) {
+  const { method, amount, note } = req.body;
+  const { userId } = req.params;
+  try {
+    if (!method || !userId || !amount || amount <= 0) {
+      return res.status(400).json({ message: "Invalid Withdraw request" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Check wallet balance
+    if (user.wallet < amount) {
+      return res
+        .status(400)
+        .json({ message: "Insufficient wallet balance for withdrawal" });
+    }
+
+    user.withdraws.push({ method, amount, note: note });
+    await user.save();
+    res
+      .status(201)
+      .json({ message: "Withdrawal request created successfully" });
+  } catch (error) {
+    console.error("Error creating withdrawal request:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+export async function getWithdrawRequest(req, res) {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId);
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+  } catch (error) {}
 }
